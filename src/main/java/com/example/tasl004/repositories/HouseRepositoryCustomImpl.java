@@ -41,6 +41,9 @@ public class HouseRepositoryCustomImpl implements HouseRepositoryCustom {
         if (user != null) {
             predicates.add(qb.equal(root.get("user"), user));
         }
+        if (name != null) {
+            predicates.add(qb.equal(root.get("name"), name));
+        }
 
 
         cq.select(root)
