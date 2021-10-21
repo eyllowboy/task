@@ -28,6 +28,35 @@ public class InformationController {
     @Autowired
     HouseService houseService;
 
+    @GetMapping("/allUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> addAmountOfContainers() {
+
+        try {
+            List<User> list = userService.getAllUsers();
+            return ResponseEntity.ok(list);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error get users", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+    }
+
+    @GetMapping("/getAllHouses")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getAllHousesForAllUsers(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "sorted", required = false, defaultValue = "name") String sorted) {
+
+        try {
+            Page<House> pageHouse = houseService.getAllHouseforAdmin(  page,   size,  sorted);
+            return ResponseEntity.ok(pageHouse);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error show  houses", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
 
 
 }

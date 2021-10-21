@@ -38,20 +38,6 @@ public class HouseController {
 
 
 
-    @GetMapping("/allUsers")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> addAmountOfContainers() {
-
-        try {
-            List<User> list = userService.getAllUsers();
-            return ResponseEntity.ok(list);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>("An error get users", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-    }
-
     @GetMapping("/getAllHouses")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getAllHousesForAllUsers(
@@ -66,8 +52,6 @@ public class HouseController {
             return new ResponseEntity<>("An error show  houses", HttpStatus.NOT_ACCEPTABLE);
         }
     }
-
-
     @GetMapping("/getfilterHouses")
     public ResponseEntity<?> getAllHouses(
             @RequestParam(value = "area", required = false, defaultValue = "0") @PositiveOrZero int area,
