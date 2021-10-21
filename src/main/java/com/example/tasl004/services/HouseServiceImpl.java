@@ -1,11 +1,15 @@
 package com.example.tasl004.services;
 
 import com.example.tasl004.entities.House;
+import com.example.tasl004.entities.User;
 import com.example.tasl004.repositories.HouseRepository;
 import com.example.tasl004.services.HouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,29 +23,22 @@ public class HouseServiceImpl implements HouseService {
     HouseRepository houseRepository;
 
     @Transactional
-    public Page<House> getAllHouse(Pageable pageable) {
-        return houseRepository.findAll(pageable);
-    }
-
     @Override
-    @Transactional
-    public Page<House> getAllHouse(int area, int amountOfRooms, Pageable pageable) {
-        return houseRepository.findAllbyAreaAmountOfRooms(area,amountOfRooms,pageable);
+    public List<House> getAllHouseForUser(String name, int area, int amountOfRooms, int page, int size, String sorted, User user) {
+
+
+        List<House> pageHouse = houseRepository.getAllHousesAreaAmountOfRooms(name, area, amountOfRooms, page, size, sorted, user);
+        return pageHouse;
+
+
     }
 
-
-
-    @Override
     @Transactional
-    public Page<House> getHouseByAmountOfRooms(int amountOfRooms, Pageable pageable) {
-        return houseRepository.findAllbyAmountOfRooms(amountOfRooms,pageable);
+    public Page<House> getAllHouseforAdmin(int page, int size, String sorted) {
+         return houseRepository.findAll( PageRequest.of(page, size, Sort.by(sorted)));
+
     }
 
-    @Override
-    @Transactional
-    public Page<House> getHouseByArea(int area, Pageable pageable) {
-        return houseRepository.findAllbyAmountOfArea(area,pageable);
-    }
 
     @Override
     @Transactional
@@ -50,19 +47,19 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public  House addOneHouse(House house) {
+    public House addOneHouse(House house) {
         return houseRepository.save(house);
     }
 
     @Transactional
     @Override
-    public  House  updateOneHouse(House house) {
+    public House updateOneHouse(House house) {
         return houseRepository.save(house);
     }
 
     @Transactional
     @Override
     public void deleteOneHouse(long id) {
-         houseRepository.deleteById(id);
+        houseRepository.deleteById(id);
     }
 }

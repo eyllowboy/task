@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
 
+import java.util.List;
 import java.util.Optional;
 
 @Validated
@@ -34,34 +36,53 @@ public class HouseController {
     UserService userService;
 
 
-    @GetMapping("/getfilterHouses")
-    public ResponseEntity<?> getAllHouses(
-            @RequestParam( value = "area", required = false, defaultValue = "0") @PositiveOrZero int area,
-            @RequestParam (value = "amountOfRooms", required = false, defaultValue = "0") @PositiveOrZero int amountOfRooms,
+
+
+    @GetMapping("/allUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> addAmountOfContainers() {
+
+        try {
+            List<User> list = userService.getAllUsers();
+            return ResponseEntity.ok(list);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error get users", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+    }
+
+    @GetMapping("/getAllHouses")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getAllHousesForAllUsers(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "5") int size,
             @RequestParam(value = "sorted", required = false, defaultValue = "name") String sorted) {
 
         try {
-
-            if (area != 0 && amountOfRooms != 0) {
-                Page<House> pageHouse = houseService.getAllHouse(area, amountOfRooms, PageRequest.of(page, size, Sort.by(sorted)));
-                return ResponseEntity.ok(pageHouse);
-
-            } else if (area == 0 && amountOfRooms != 0) {
-                Page<House> pageHouse = houseService.getHouseByAmountOfRooms(amountOfRooms, PageRequest.of(page, size, Sort.by(sorted)));
-                return ResponseEntity.ok(pageHouse);
-
-            } else if (area != 0 && amountOfRooms == 0) {
-                Page<House> pageHouse = houseService.getHouseByArea(area, PageRequest.of(page, size, Sort.by(sorted)));
-                return ResponseEntity.ok(pageHouse);
-
-            } else {
-                Page<House> pageHouse = houseService.getAllHouse(PageRequest.of(page, size, Sort.by(sorted)));
-                return ResponseEntity.ok(pageHouse);
-            }
+            Page<House> pageHouse = houseService.getAllHouseforAdmin(  page,   size,  sorted);
+            return ResponseEntity.ok(pageHouse);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error show  houses", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
 
 
+    @GetMapping("/getfilterHouses")
+    public ResponseEntity<?> getAllHouses(
+            @RequestParam(value = "area", required = false, defaultValue = "0") @PositiveOrZero int area,
+            @RequestParam(value = "amountOfRooms", required = false, defaultValue = "0") @PositiveOrZero int amountOfRooms,
+            @RequestParam(value = "nameHouse", required = false, defaultValue = "null") String name,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "sorted", required = false, defaultValue = "name") String sorted,
+            HttpServletRequest request) {
+
+        try {
+            String userName = request.getRemoteUser();
+            User user = userService.findByUsername(userName);
+            List<House> pageHouse = houseService.getAllHouseForUser(name, area, amountOfRooms, page, size, sorted, user);
+            return ResponseEntity.ok(pageHouse);
         } catch (Exception e) {
             return new ResponseEntity<>("An error show houses", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -80,7 +101,7 @@ public class HouseController {
     }
 
     @PostMapping("/addOneHouse")
-    public ResponseEntity<?> addOneHouse(@Valid   House house, HttpServletRequest request, Errors errors) {
+    public ResponseEntity<?> addOneHouse(@Valid House house, HttpServletRequest request, Errors errors) {
 
         try {
 
