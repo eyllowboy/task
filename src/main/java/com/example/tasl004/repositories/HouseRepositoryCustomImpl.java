@@ -44,12 +44,14 @@ public class HouseRepositoryCustomImpl implements HouseRepositoryCustom {
         if (name != null) {
             predicates.add(qb.equal(root.get("name"), name));
         }
+         predicates.add(qb.equal(root.get("deleted"), false));
+
 
 
         cq.select(root)
                 .where(predicates.toArray(new Predicate[]{}));
         cq.orderBy(qb.asc(root.get(sorted)));
-
+        System.out.println(em.createQuery(cq).setFirstResult(page*5).setMaxResults(size).getResultList());
         return em.createQuery(cq).setFirstResult(page*5).setMaxResults(size).getResultList();
     }
 

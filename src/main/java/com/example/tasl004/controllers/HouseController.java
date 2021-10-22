@@ -41,7 +41,7 @@ public class HouseController {
     public ResponseEntity<?> getAllHouses(
             @RequestParam(value = "area", required = false, defaultValue = "0") @PositiveOrZero int area,
             @RequestParam(value = "amountOfRooms", required = false, defaultValue = "0") @PositiveOrZero int amountOfRooms,
-            @RequestParam(value = "nameHouse", required = false, defaultValue = "null") String name,
+            @RequestParam(value = "name", required = false ) String name,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "5") int size,
             @RequestParam(value = "sorted", required = false, defaultValue = "name") String sorted,

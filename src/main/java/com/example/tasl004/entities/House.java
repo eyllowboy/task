@@ -31,7 +31,7 @@ public class House {
 
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_name", referencedColumnName = "id")
     private User user;
 
