@@ -6,6 +6,7 @@ import com.example.tasl004.repositories.HouseRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -45,8 +46,21 @@ class HouseServiceTest{
 
           Optional<House> oneHouse = service.getOneHouse(2);
          assertThat(oneHouse.get()).isEqualTo(new House(2l, "house2", 70, 3, false));
+
+         verify(repository).findById(2l);
     }
 
+    @Test
+    public void captureTest(){
+        given(repository.findById(anyLong())).willReturn(Optional.of(new House()));
+
+        service.getOneHouse(2l);
+        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+
+        verify(repository).findById(captor.capture());
+        Long l = captor.getValue();
+        assertThat(l).isEqualTo(2l);
+    }
     @Test
     public void addOneHouse(){
         given(repository.save(new House(2l, "house2", 70, 3, false)))
@@ -54,18 +68,11 @@ class HouseServiceTest{
 
         assertThat(service.addOneHouse(new House(2l, "house2", 70, 3, false)))
                 .isEqualTo(new House(2l, "house2", 70, 3, false));
+
+        verify(repository).save(new House(2l, "house2", 70, 3, false));
     }
 
-    @Test
-    public void filtering(){
-        User user = new User(2l,"user","$2a$12$Z6ONOLjiUZIkCBCaxwawKu0b6rCITC6.Kr0LuKDYFHgf0zywltbHG");
 
-        given(repository.getAllHousesAreaAmountOfRooms("house3",0,0,0,5,"name",user))
-                .willReturn(Stream.of(new House(3l,"house3",55,2,false,user)).collect(Collectors.toList()));
-
-        assertThat(service.getAllHouseForUser("house3",0,0,0,5,"name",user))
-                .isEqualTo(List.of(new House(3l,"house3",55,2,false,user)));
-    }
 
     @Test
     public void deleted(){
