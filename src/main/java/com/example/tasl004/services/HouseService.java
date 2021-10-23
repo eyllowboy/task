@@ -16,14 +16,6 @@ public interface HouseService {
 
     Page<House> getAllHouseforAdmin(int page, int size, String sorted );
 
-//    Page<House> getAllHouse(Pageable pageable);
-//
-//    Page<House> getAllHouse(int area, int amountOfRooms, Pageable pageable);
-//
-//    Page<House> getHouseByAmountOfRooms(int amountOfRooms, Pageable pageable);
-//
-//    Page<House> getHouseByArea(int area, Pageable pageable);
-//
     Optional<House> getOneHouse(long id);
 
     House addOneHouse(House house);

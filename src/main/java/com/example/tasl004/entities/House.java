@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.Objects;
 
 @Entity
 @Table(name = "house")
@@ -36,6 +37,25 @@ public class House {
     private User user;
 
     public House() {
+    }
+
+
+
+    public House(Long id, String name, int area, int amountOfRooms, boolean deleted) {
+        this.id = id;
+        this.name = name;
+        this.area = area;
+        this.amountOfRooms = amountOfRooms;
+        this.deleted = deleted;
+    }
+
+    public House(Long id, String name, int area, int amountOfRooms, boolean deleted, User user) {
+        this.id = id;
+        this.name = name;
+        this.area = area;
+        this.amountOfRooms = amountOfRooms;
+        this.deleted = deleted;
+        this.user = user;
     }
 
     public Long getId() {
@@ -86,5 +106,26 @@ public class House {
         this.deleted = deleted;
     }
 
+    @Override
+    public String toString() {
+        return "House{" +
+                "name='" + name + '\'' +
+                ", area=" + area +
+                ", amountOfRooms=" + amountOfRooms +
+                ", deleted=" + deleted +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        House house = (House) o;
+        return area == house.area && amountOfRooms == house.amountOfRooms && deleted == house.deleted && Objects.equals(name, house.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, area, amountOfRooms, deleted);
+    }
 }

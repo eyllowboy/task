@@ -19,8 +19,12 @@ import java.util.Optional;
 @Service
 public class HouseServiceImpl implements HouseService {
 
-    @Autowired
+
     HouseRepository houseRepository;
+    @Autowired
+    public HouseServiceImpl(HouseRepository houseRepository) {
+        this.houseRepository = houseRepository;
+    }
 
     @Transactional
     @Override
@@ -48,6 +52,7 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public House addOneHouse(House house) {
+
         return houseRepository.save(house);
     }
 
