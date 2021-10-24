@@ -1,6 +1,8 @@
 package com.example.tasl004.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
@@ -17,7 +19,7 @@ public class User {
     private String password;
 
     private String email;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<House> houses;
 

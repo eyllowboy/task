@@ -35,7 +35,20 @@ public class HouseController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/getAllHouses")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getAllHousesForAdmin(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "sorted", required = false, defaultValue = "name") String sorted) {
 
+        try {
+            Page<House> pageHouse = houseService.getAllHouseforAdmin(  page,   size,  sorted);
+            return ResponseEntity.ok(pageHouse);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error show  houses", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
 
     @GetMapping("/getfilterHouses")
     public ResponseEntity<?> getAllHouses(
